@@ -5,7 +5,8 @@
 pipeline {
     agent any 
     environment {
-        DEPLOY_TO = 'production' // just an environment variable 
+        //DEPLOY_TO = 'production' // just an environment variable 
+        DEPLOY_TO = 'somethingelse'
     }
     stages {
         stage ('WhenStage') {
