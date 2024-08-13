@@ -1,18 +1,25 @@
 pipeline {
     agent any 
+    environment {
+        //DEPLOY_TO = 'production' // just an environment variable 
+        DEPLOY_TO = 'somethingelse'
+    }
     stages {
-        stage ('Build') {
+        stage ('BuildOnly') {
             steps {
-                echo "Building the application"
+                echo "***** Building the app ******"
             }
         }
-        stage ("DeployToProd") {
-            when {
-                // this stage should trigger if the branch is stage or production
-                expression { BRANCH_NAME ==~ /(production|staging)/}
+        stage ('anyofstage') {
+            when { 
+                anyOf {
+                    expression { BRANCH_NAME ==~ /(production|staging)/} // condition 1
+                    environment name: 'DEPLOY_TO', value: 'production' // condition 2 
+                }
+
             }
             steps {
-                echo "****** Deploying to Production *******"
+                echo "Deploying to k8s cluster"
             }
         }
     }
