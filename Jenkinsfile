@@ -1,21 +1,18 @@
-// When: at least one condition must be specified 
-// https://www.jenkins.io/doc/book/pipeline/syntax/#when
-// If more than one condition is specified, all condtions must return true for the stage to be executed
-
 pipeline {
     agent any 
-    environment {
-        //DEPLOY_TO = 'production' // just an environment variable 
-        DEPLOY_TO = 'somethingelse'
-    }
     stages {
-        stage ('WhenStage') {
+        stage ('Build') {
+            steps {
+                echo "Building the application"
+            }
+        }
+        stage ("DeployToProd") {
             when {
-                // environment based condition
-                environment name: 'DEPLOY_TO', value: 'production'
+                // this stage should trigger if the branch is stage or production
+                expression { BRANCH_NAME ==~ /(production|staging)/}
             }
             steps {
-                echo "Deploying to When Stage"
+                echo "****** Deploying to Production *******"
             }
         }
     }
