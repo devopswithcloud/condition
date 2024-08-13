@@ -1,4 +1,3 @@
-
 pipeline {
     parameters {
         string (name: 'CHANGE_TICKET', defaultValue: 'CH12345', description: 'Please enter your change ticket')
@@ -21,5 +20,5 @@ pipeline {
                 echo "The pasword is ${params.myPassword}"
             }
         }
-
     }
+}
