@@ -1,25 +1,53 @@
 pipeline {
     agent any 
-    environment {
-        //DEPLOY_TO = 'production' // just an environment variable 
-        DEPLOY_TO = 'somethingelse'
-    }
     stages {
-        stage ('BuildOnly') {
+        stage ('Build') {
             steps {
-                echo "***** Building the app ******"
+                echo "***** Building the application *********"
             }
         }
-        stage ('anyofstage') {
-            when { 
-                allOf {
-                    expression { BRANCH_NAME ==~ /(production|staging)/} // condition 1
-                    environment name: 'DEPLOY_TO', value: 'production' // condition 2 
-                }
-
+        stage ('Sonar') {
+            steps {
+                echo "***** Building the application *********"
+            }
+        }
+        stage ('DockerBuild') {
+            steps {
+                echo "***** Building the Container application *********"
+            }
+        }
+        stage ('DockerPus') {
+            steps {
+                echo "***** Pushing  the image *********"
+            }
+        }
+        stage ('DeployToDev') {
+            steps {
+                echo "***** Deploying  the application to dev env *********"
+            }
+        }
+        stage ('DeployToTest') {
+            steps {
+                echo "***** Deploying  the application to test env *********"
+            }
+        }
+        stage ('DeployToStage') {
+            when {
+                branch 'release/*'
             }
             steps {
-                echo "Deploying to k8s cluster"
+                echo "***** Deploying  the application to Stage env *********"
+            }
+        }
+        stage ('DeployToProd') {
+            when {
+                // our application should deploy to prod only if the app is going through TAG
+                //vx.x.x ====> v1.2.3
+                // v.1.2.3 , it should skip
+                tag pattern: "v\\d{1,2}\\.\\d{1,2}\\.\\d{1,2}", comparator: "REGEXP"
+            }
+            steps {
+                echo "***** Deploying  the application to dev env *********"
             }
         }
     }
